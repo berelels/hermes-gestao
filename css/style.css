@@ -31,9 +31,14 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 /* HEADER ACTIONS */
 #header-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
 #clock-display{font-size:12px;color:var(--t3);font-variant-numeric:tabular-nums}
-#seed-btn{width:34px;height:34px;border-radius:var(--rs);background:var(--bg-card2);border:1px solid var(--border);color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
-#seed-btn:hover{color:var(--accent);border-color:var(--accent)}
-#seed-btn svg{width:15px;height:15px}
+#theme-btn{width:34px;height:34px;border-radius:var(--rs);background:var(--bg-card2);border:1px solid var(--border);color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+#theme-btn:hover{color:var(--accent);border-color:var(--accent)}
+#theme-btn svg{width:15px;height:15px}
+/* THEME POPOVER */
+#theme-popover{position:fixed;background:var(--bg-card2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;z-index:600;box-shadow:var(--shadow);animation:slideUp .2s ease}
+.theme-swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;transition:transform .15s,box-shadow .15s;flex-shrink:0;border:2px solid transparent}
+.theme-swatch:hover{transform:scale(1.15)}
+.theme-swatch.active{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.25)}
 /* CAIXA STATUS PILL */
 #caixa-status-pill .cs-pill{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .2s}
 #caixa-status-pill .cs-pill.aberto{background:rgba(34,211,160,.12);color:var(--green);border:1px solid rgba(34,211,160,.25)}
