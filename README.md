@@ -182,5 +182,5 @@ MIT © [berelels](https://github.com/berelels)
 ---
 
 <div align="center">
-  <sub>Feito com ⚡ e muito café</sub>
+  <sub>Feito com ⚡ e muito achocolatado.</sub>
 </div>
