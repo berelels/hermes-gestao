@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Hermes — Sistema de Gestão Empresarial: estoque, vendas, financeiro, relatórios e nota fiscal." />
+  <title>Hermes — Gestão Empresarial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app-shell">
+
+    <header id="app-header">
+      <div id="logo-area">
+        <div id="logo-icon"><i data-lucide="zap"></i></div>
+        <span id="logo-text">Hermes</span>
+      </div>
+
+      <nav id="pill-nav" role="tablist" aria-label="Navegação principal">
+        <button class="pill-tab active" data-page="dashboard" id="btn-dashboard">
+          <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
+        </button>
+        <button class="pill-tab" data-page="estoque" id="btn-estoque">
+          <i data-lucide="boxes"></i><span>Estoque</span>
+        </button>
+        <button class="pill-tab" data-page="vendas" id="btn-vendas">
+          <i data-lucide="shopping-cart"></i><span>Vendas</span>
+        </button>
+        <button class="pill-tab" data-page="financeiro" id="btn-financeiro">
+          <i data-lucide="landmark"></i><span>Financeiro</span>
+          <span id="badge-financeiro" class="badge hidden">0</span>
+        </button>
+        <button class="pill-tab" data-page="relatorios" id="btn-relatorios">
+          <i data-lucide="bar-chart-3"></i><span>Relatórios</span>
+        </button>
+        <button class="pill-tab" data-page="notafiscal" id="btn-notafiscal">
+          <i data-lucide="receipt"></i><span>Nota Fiscal</span>
+        </button>
+        <div id="pill-slider"></div>
+      </nav>
+
+      <div id="header-actions">
+        <div id="caixa-status-pill"></div>
+        <div id="clock-display"></div>
+        <button id="seed-btn" title="Carregar dados de exemplo"><i data-lucide="database"></i></button>
+      </div>
+    </header>
+
+    <main id="page-content">
+      <div class="page-loading"><i data-lucide="loader-2" class="spin"></i></div>
+    </main>
+
+    <footer id="status-bar">
+      <span id="sb-produtos">0 produtos</span>
+      <span class="sb-dot">•</span>
+      <span id="sb-caixa">Caixa fechado</span>
+      <span class="sb-dot">•</span>
+      <span id="sb-alertas">0 alertas</span>
+      <span id="sb-ver">Hermes v2.0</span>
+    </footer>
+  </div>
+
+  <!-- MODAL CONTAINER (filled by JS) -->
+  <div id="modal-container"></div>
+
+  <!-- TOAST -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- PRINT AREA (hidden, used for PDF print) -->
+  <div id="print-area"></div>
+
+  <!-- SCRIPTS — app.js DEVE vir antes das páginas (define Hermes + formatters) -->
+  <script src="js/storage.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/pages/dashboard.js"></script>
+  <script src="js/pages/estoque.js"></script>
+  <script src="js/pages/vendas.js"></script>
+  <script src="js/pages/financeiro.js"></script>
+  <script src="js/pages/relatorios.js"></script>
+  <script src="js/pages/notafiscal.js"></script>
+</body>
+</html>
