@@ -143,6 +143,17 @@ const DB = {
   },
 
   /* ── HELPERS ── */
+  generateSKU(categoria){
+    if(!categoria) return '';
+    const prefix=categoria.trim()[0].toUpperCase();
+    const regex=new RegExp(`^${prefix}(\\d+)$`);
+    let max=0;
+    this.getProdutos().forEach(p=>{
+      if(p.sku){ const m=p.sku.match(regex); if(m) max=Math.max(max,+m[1]); }
+    });
+    return prefix+String(max+1).padStart(2,'0');
+  },
+
   atualizarStatusContas(){
     const hoje=new Date().toDateString();
     ['CPAGAR','CRECEBER'].forEach(k=>{

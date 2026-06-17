@@ -122,11 +122,11 @@ function initClock(){
 
 /* ── Theme ── */
 const THEMES = [
-  {id:'amber',  label:'Câmbar',  color:'#f59e0b', color2:'#fbbf24', shade:'#ffaa45'},
-  {id:'blue',   label:'Azul',    color:'#3b9eff', color2:'#60b4ff', shade:'#7ac4ff'},
-  {id:'green',  label:'Verde',   color:'#22d3a0', color2:'#34dca8', shade:'#5de8bb'},
-  {id:'purple', label:'Roxo',    color:'#c084fc', color2:'#d09ffd', shade:'#d4a4fd'},
-  {id:'rose',   label:'Rosa',    color:'#f472b6', color2:'#f9a8d4', shade:'#fba6c9'},
+  {id:'amber',  label:'Âmbar',  color:'#f59e0b', color2:'#fbbf24', shade:'#ffaa45'},
+  {id:'blue',   label:'Azul',   color:'#3b9eff', color2:'#60b4ff', shade:'#7ac4ff'},
+  {id:'green',  label:'Verde',  color:'#22d3a0', color2:'#34dca8', shade:'#5de8bb'},
+  {id:'purple', label:'Roxo',   color:'#c084fc', color2:'#d09ffd', shade:'#d4a4fd'},
+  {id:'rose',   label:'Rosa',   color:'#f472b6', color2:'#f9a8d4', shade:'#fba6c9'},
 ];
 
 function applyTheme(id){
@@ -138,27 +138,37 @@ function applyTheme(id){
   localStorage.setItem('h_theme',id);
 }
 
+function applyBg(mode){
+  document.documentElement.setAttribute('data-bg',mode);
+  localStorage.setItem('h_bg',mode);
+}
+
 function initTheme(){
   applyTheme(localStorage.getItem('h_theme')||'amber');
+  applyBg(localStorage.getItem('h_bg')||'dark');
+
   const btn=document.getElementById('theme-btn');
   let pop=null;
 
-  function closePop(){
-    if(pop){ pop.remove(); pop=null; }
-  }
+  function closePop(){ if(pop){ pop.remove(); pop=null; } }
 
   btn.addEventListener('click',e=>{
     e.stopPropagation();
     if(pop){ closePop(); return; }
-    const cur=localStorage.getItem('h_theme')||'amber';
+    const curT=localStorage.getItem('h_theme')||'amber';
+    const curB=localStorage.getItem('h_bg')||'dark';
     pop=document.createElement('div');
     pop.id='theme-popover';
     pop.innerHTML=`
-      <div style="font-size:10.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Tema de cor</div>
-      <div style="display:flex;gap:8px;align-items:center">
-        ${THEMES.map(t=>`
-          <button class="theme-swatch${t.id===cur?' active':''}" data-id="${t.id}" title="${t.label}"
-            style="background:${t.color}"></button>`).join('')}
+      <div class="tp-label">Fundo</div>
+      <div class="tp-row">
+        <button class="tp-mode-btn${curB==='dark'?' active':''}" data-bg="dark"><i data-lucide="moon"></i> Escuro</button>
+        <button class="tp-mode-btn${curB==='light'?' active':''}" data-bg="light"><i data-lucide="sun"></i> Claro</button>
+      </div>
+      <div class="tp-divider"></div>
+      <div class="tp-label">Destaque</div>
+      <div class="tp-row">
+        ${THEMES.map(t=>`<button class="theme-swatch${t.id===curT?' active':''}" data-id="${t.id}" title="${t.label}" style="background:${t.color}"></button>`).join('')}
       </div>`;
     const rect=btn.getBoundingClientRect();
     pop.style.top=(rect.bottom+8)+'px';
@@ -166,6 +176,14 @@ function initTheme(){
     document.body.appendChild(pop);
     lucide.createIcons({nodes:[pop]});
 
+    pop.querySelectorAll('.tp-mode-btn').forEach(b=>{
+      b.addEventListener('click',ev=>{
+        ev.stopPropagation();
+        applyBg(b.dataset.bg);
+        pop.querySelectorAll('.tp-mode-btn').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+      });
+    });
     pop.querySelectorAll('.theme-swatch').forEach(sw=>{
       sw.addEventListener('click',ev=>{
         ev.stopPropagation();

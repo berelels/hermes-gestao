@@ -82,7 +82,7 @@ openModal(id=null){
           <div class="form-group col-2"><label>Nome *</label><input id="mp-nome" value="${v.nome}" placeholder="Ex: Camiseta Básica"></div>
           <div class="form-group"><label>Categoria *</label><input id="mp-cat" value="${v.categoria}" list="mp-cats" placeholder="Ex: Vestuário">
             <datalist id="mp-cats">${cats.map(c=>`<option value="${c}">`).join('')}</datalist></div>
-          <div class="form-group"><label>SKU</label><input id="mp-sku" value="${v.sku||''}" placeholder="Ex: CAM-001"></div>
+          <div class="form-group"><label>SKU <span style="font-weight:400;color:var(--t3)">(auto pela categoria)</span></label><input id="mp-sku" value="${v.sku||''}" placeholder="Ex: A01"></div>
           <div class="form-group"><label>Custo (R$) *</label><input type="number" id="mp-custo" value="${v.custo}" step="0.01" min="0" placeholder="0,00"></div>
           <div class="form-group"><label>Margem (%) *</label><input type="number" id="mp-margem" value="${v.margem}" step="0.1" min="0" placeholder="30"></div>
           <div class="form-group"><label>Preço Venda</label><input type="number" id="mp-preco" value="${v.preco}" readonly></div>
@@ -115,6 +115,21 @@ openModal(id=null){
   };
   document.getElementById('mp-custo').addEventListener('input',upd);
   document.getElementById('mp-margem').addEventListener('input',upd);
+
+  /* Auto-SKU apenas para produtos novos */
+  if(!p){
+    const catEl=document.getElementById('mp-cat');
+    const skuEl=document.getElementById('mp-sku');
+    const genSKU=()=>{
+      if(skuEl.dataset.manual) return;
+      const cat=catEl.value.trim();
+      if(cat){ skuEl.value=DB.generateSKU(cat); }
+    };
+    skuEl.addEventListener('input',()=>{ skuEl.dataset.manual='1'; });
+    catEl.addEventListener('input',genSKU);
+    catEl.addEventListener('change',genSKU);
+  }
+
   document.getElementById('mp-save').addEventListener('click',()=>{
     const custo=+document.getElementById('mp-custo').value;
     const margem=+document.getElementById('mp-margem').value;
