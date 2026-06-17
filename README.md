@@ -5,24 +5,38 @@
 
 **Estoque · Vendas · Financeiro · Relatórios · Nota Fiscal**
 
-[![Status](https://img.shields.io/badge/status-beta-f59e0b?style=flat-square)](https://github.com/berelels/hermes-gestao)
-[![Versão](https://img.shields.io/badge/versão-2.0-22d3a0?style=flat-square)](https://github.com/berelels/hermes-gestao)
-[![Licença](https://img.shields.io/badge/licença-MIT-3b9eff?style=flat-square)](LICENSE)
-[![100% Client-Side](https://img.shields.io/badge/backend-nenhum-c084fc?style=flat-square)](#)
+[![Status](https://img.shields.io/badge/status-fase%20de%20testes-f59e0b?style=flat-square)](#aviso-importante)
+[![Versão](https://img.shields.io/badge/versão-2.0--beta-ff5c6a?style=flat-square)](#)
+[![Tipo](https://img.shields.io/badge/tipo-demonstração-c084fc?style=flat-square)](#aviso-importante)
 
 </div>
 
 ---
 
-## 📋 Sobre
-
-**Hermes** é um sistema de gestão empresarial completo, leve e 100% client-side — sem servidor, sem banco de dados externo, sem instalação. Roda direto no navegador e persiste todos os dados via `localStorage`.
-
-Desenvolvido como SPA (Single Page Application) com HTML, CSS e JavaScript puro, projetado para ser hospedado gratuitamente no **GitHub Pages**.
+> [!CAUTION]
+> ## ⚠️ AVISO IMPORTANTE — LEIA ANTES DE USAR
+>
+> **Este repositório contém uma versão de demonstração e testes do sistema Hermes.**
+>
+> - Esta versão é disponibilizada **temporária e exclusivamente** para fins de **avaliação e coleta de feedback**.
+> - O produto **não está finalizado**. Funcionalidades, interface, comportamentos e dados podem mudar significativamente na versão final.
+> - A versão final do Hermes **não será gratuita**, não será open-source e não estará disponível publicamente desta forma.
+> - **Não utilize esta versão para fins comerciais ou produtivos.** Os dados são armazenados apenas no seu navegador e podem ser perdidos a qualquer momento.
+> - Este repositório poderá ser tornado privado ou removido sem aviso prévio.
+>
+> © Todos os direitos reservados ao desenvolvedor. A disponibilização desta demo não implica cessão de qualquer direito sobre o software.
 
 ---
 
-## ✨ Funcionalidades
+## 📋 Sobre esta Demo
+
+O **Hermes** é um sistema de gestão empresarial em desenvolvimento. Esta versão beta foi disponibilizada para que usuários selecionados possam explorar as funcionalidades planejadas, reportar bugs e fornecer feedback sobre a experiência de uso.
+
+> O objetivo desta fase é validar fluxos e usabilidade — **não** reflete a arquitetura, performance ou conjunto de funcionalidades da versão comercial final.
+
+---
+
+## ✨ Funcionalidades desta Demo
 
 ### 📊 Dashboard
 - KPIs em tempo real: faturamento, lucro, unidades vendidas e alertas
@@ -36,151 +50,78 @@ Desenvolvido como SPA (Single Page Application) com HTML, CSS e JavaScript puro,
 - Cálculo automático de preço de venda pela margem definida
 - Preview visual de custo → margem → preço em tempo real
 - Filtros por categoria, status (OK / Baixo / Zerado) e busca por nome/SKU
-- Indicador visual de margem com barra de progresso
 
 ### 🛒 Vendas
 - Registro de vendas com validação de estoque disponível
-- Regra de negócio: **caixa deve estar aberto** para registrar vendas
+- Regra de negócio: caixa deve estar aberto para registrar vendas
 - Suporte a múltiplos canais: Loja, Online, WhatsApp, Marketplace
-- Preview em tempo real de total e lucro estimado antes de confirmar
 - Histórico completo com filtros por produto e canal
-- Exclusão de venda **restaura automaticamente** o estoque e remove o movimento financeiro
 
 ### 💰 Financeiro
-- **Caixa:** abertura/fechamento de sessões com saldo inicial e final calculado
-- **Contas a Pagar:** cadastro, pagamento e controle de vencimento
-- **Contas a Receber:** cadastro, recebimento e controle de vencimento
-- **Movimentações:** extrato completo de entradas e saídas com lançamento manual
-- Badge de alertas para contas vencidas no menu de navegação
+- **Caixa:** abertura/fechamento de sessões com saldo calculado
+- **Contas a Pagar e Receber:** cadastro e controle de vencimentos
+- **Movimentações:** extrato de entradas e saídas com lançamento manual
 - Atualização automática de status das contas por data
 
 ### 📈 Relatórios
-- **Vendas:** histórico completo com faturamento, lucro e margem total
-- **Estoque:** posição atual de todos os produtos com alertas de reposição
-- **Financeiro:** fluxo de caixa com total de entradas, saídas e resultado
-- **Margens & Lucro:** ranking de lucratividade por produto
-- **Visão Anual:** faturamento e lucro mês a mês com gráfico comparativo
-- **Contas:** relatório consolidado de contas a pagar e receber
-- Exportação para **XLSX** (Excel) e impressão / **PDF** nativos
+- Vendas, estoque, financeiro, margens, visão anual e contas
+- Exportação para **XLSX** e impressão / **PDF** nativos
 
 ### 🧾 Nota Fiscal
 - Emissão de NF simplificada para controle interno
-- Adição de múltiplos itens com preenchimento automático de preço
-- Cálculo de desconto e total
-- Histórico de NFs emitidas com opção de reimpressão e cancelamento
-- Auto-preenchimento de dados do cliente via histórico
-- Confirmação de impressão ao emitir
-
----
-
-## 🛠️ Stack
-
-| Tecnologia | Uso |
-|-----------|-----|
-| HTML5 | Estrutura e shell da aplicação |
-| CSS3 (Vanilla) | Design system completo com variáveis e animações |
-| JavaScript ES6+ | Lógica, roteamento SPA e manipulação de DOM |
-| [Chart.js 4.4.2](https://www.chartjs.org/) | Gráficos de linha, barra e rosca |
-| [Lucide 0.468.0](https://lucide.dev/) | Biblioteca de ícones |
-| [SheetJS 0.20.1](https://sheetjs.com/) | Exportação para XLSX |
-| localStorage | Persistência de dados client-side |
-
----
-
-## 🚀 Como usar
-
-### Online (GitHub Pages)
-Acesse diretamente pelo navegador — nenhuma instalação necessária:
-```
-https://berelels.github.io/hermes-gestao
-```
-
-### Local
-```bash
-# Clone o repositório
-git clone https://github.com/berelels/hermes-gestao.git
-
-# Abra o index.html no navegador
-# (ou sirva com qualquer servidor estático)
-cd hermes-gestao
-npx serve .
-```
-
-> Não é necessário `npm install`, build, compilação ou qualquer dependência local. Todas as bibliotecas são carregadas via CDN.
-
----
-
-## 🗂️ Estrutura do Projeto
-
-```
-hermes-gestao/
-├── index.html              # Shell da aplicação (header, nav, footer)
-├── css/
-│   └── style.css           # Design system completo
-└── js/
-    ├── app.js              # Roteador SPA, utilitários (toast, modal, clock)
-    ├── storage.js          # Camada de dados (localStorage façade)
-    ├── charts.js           # Helpers de gráficos (Chart.js)
-    └── pages/
-        ├── dashboard.js    # Página Dashboard
-        ├── estoque.js      # Página Estoque
-        ├── vendas.js       # Página Vendas
-        ├── financeiro.js   # Página Financeiro
-        ├── relatorios.js   # Página Relatórios
-        └── notafiscal.js   # Página Nota Fiscal
-```
+- Histórico de NFs com reimpressão e cancelamento
 
 ---
 
 ## 🎯 Dados de Exemplo
 
-Clique no botão **⚡ (banco de dados)** no cabeçalho para carregar dados de exemplo com:
-- 15 produtos em 5 categorias
-- Histórico de vendas dos últimos 90 dias
-- Caixa aberto com movimentações
-- Contas a pagar e receber (incluindo algumas vencidas)
-- Clientes cadastrados para emissão de NF
+Clique no botão **⚡ (banco de dados)** no cabeçalho para carregar dados de exemplo e explorar o sistema sem precisar cadastrar nada manualmente.
 
-> ⚠️ Esta ação apaga todos os dados atuais.
+> ⚠️ Esta ação apaga todos os dados atuais do navegador.
 
 ---
 
-## 💾 Armazenamento de Dados
+## 💾 Limitações desta Versão
 
-Todos os dados são salvos no `localStorage` do navegador sob as chaves:
+| Limitação | Detalhe |
+|-----------|---------|
+| **Sem nuvem** | Dados ficam **somente no seu navegador**. Limpar o cache apaga tudo. |
+| **Sem multiusuário** | Um único perfil por navegador, sem login ou controle de acesso. |
+| **Sem integração** | Não se conecta a ERPs, APIs fiscais ou sistemas externos. |
+| **Sem backup automático** | Não há sincronização ou exportação automática de dados. |
+| **NF simplificada** | A emissão de nota fiscal é apenas para controle interno — não tem validade fiscal. |
 
-| Chave | Conteúdo |
-|-------|----------|
-| `h_produtos` | Catálogo de produtos |
-| `h_vendas` | Histórico de vendas |
-| `h_caixa` | Sessões de caixa |
-| `h_movimentos` | Movimentações financeiras |
-| `h_cpagar` | Contas a pagar |
-| `h_creceber` | Contas a receber |
-| `h_nfs` | Notas fiscais emitidas |
-| `h_clientes` | Cadastro de clientes |
-| `h_nf_seq` | Sequencial de NF |
-
-> Os dados ficam **apenas no seu navegador**. Limpar o cache do navegador apaga tudo.
+Estas limitações são **inerentes à natureza desta demo** e serão resolvidas na versão final do produto.
 
 ---
 
-## 📱 Responsividade
+## 🛠️ Stack desta Demo
 
-| Breakpoint | Layout |
-|-----------|--------|
-| > 1000px | Layout completo, todos os grids em múltiplas colunas |
-| ≤ 1000px | KPIs e gráficos em 2 colunas |
-| ≤ 700px | Layout totalmente em coluna única, textos da nav ocultados |
+| Tecnologia | Uso |
+|-----------|-----|
+| HTML5 / CSS3 / JavaScript | Interface e lógica client-side |
+| [Chart.js 4.4.2](https://www.chartjs.org/) | Gráficos |
+| [Lucide 0.468.0](https://lucide.dev/) | Ícones |
+| [SheetJS 0.20.1](https://sheetjs.com/) | Exportação XLSX |
+| localStorage | Persistência local no navegador |
+
+> A stack da versão final do produto será diferente.
 
 ---
 
-## 📄 Licença
+## 📬 Feedback
 
-MIT © [berelels](https://github.com/berelels)
+Encontrou um bug ou tem uma sugestão? Abra uma [Issue](https://github.com/berelels/hermes-gestao/issues) neste repositório.
+
+Todo feedback é bem-vindo e contribui diretamente para o desenvolvimento do produto final.
 
 ---
 
 <div align="center">
-  <sub>Feito com ⚡ e muito achocolatado.</sub>
+
+**© Hermes — Todos os direitos reservados.**
+
+*Esta demo é disponibilizada temporariamente para fins de avaliação.*
+*A versão final é um produto comercial e não estará disponível gratuitamente.*
+
 </div>
