@@ -2,11 +2,12 @@
 /* ══ HERMES v2 — Storage (LocalStorage façade) ══ */
 const DB = {
   K: {
-    PRODUTOS:'h_produtos', VENDAS:'h_vendas',
-    CAIXA:'h_caixa',        MOVIMENTOS:'h_movimentos',
-    CPAGAR:'h_cpagar',      CRECEBER:'h_creceber',
-    NFS:'h_nfs',            CLIENTES:'h_clientes',
-    NF_SEQ:'h_nf_seq',
+    PRODUTOS:'h_produtos',   VENDAS:'h_vendas',
+    CAIXA:'h_caixa',         MOVIMENTOS:'h_movimentos',
+    CPAGAR:'h_cpagar',       CRECEBER:'h_creceber',
+    NFS:'h_nfs',             CLIENTES:'h_clientes',
+    NF_SEQ:'h_nf_seq',       PEDIDOS:'h_pedidos',
+    FORNECEDORES:'h_fornecedores',
   },
   _g(k){ try{return JSON.parse(localStorage.getItem(k))||[];}catch{return [];} },
   _s(k,v){ localStorage.setItem(k,JSON.stringify(v)); },
@@ -15,6 +16,7 @@ const DB = {
   /* ── PRODUTOS ── */
   getProdutos(){ return this._g(this.K.PRODUTOS); },
   getProduto(id){ return this.getProdutos().find(p=>p.id===id)||null; },
+  getProdutoPorBarras(codigo){ return this.getProdutos().find(p=>p.codigoBarras===codigo)||null; },
   saveProduto(p){
     const list=this.getProdutos();
     if(!p.id){ p.id=this._id('p'); p.criadoEm=new Date().toISOString(); }
@@ -37,6 +39,16 @@ const DB = {
   getCaixaSessoes(){ return this._g(this.K.CAIXA); },
   getCaixaAberto(){
     return this.getCaixaSessoes().find(c=>c.status==='aberto')||null;
+  },
+  getUltimaCaixaFechada(){
+    const fechadas=this.getCaixaSessoes()
+      .filter(c=>c.status==='fechado'&&c.saldoFinal!=null)
+      .sort((a,b)=>new Date(b.fechamentoEm)-new Date(a.fechamentoEm));
+    return fechadas[0]||null;
+  },
+  getSaldoInicialSugerido(){
+    const ultima=this.getUltimaCaixaFechada();
+    return ultima?ultima.saldoFinal:0;
   },
   abrirCaixa(saldoInicial){
     if(this.getCaixaAberto()) throw new Error('Caixa já está aberto.');
@@ -113,8 +125,9 @@ const DB = {
     const c=list.find(x=>x.id===id);
     if(!c) throw new Error('Conta não encontrada.');
     if(c.status==='recebida') throw new Error('Conta já foi recebida.');
+    const fonte=c.fonte||c.cliente||'—';
     const mov=this.addMovimento({caixaId:caixa.id,tipo:'entrada',categoria:'recebimento',
-      descricao:`Receb: ${c.cliente} — ${c.descricao}`,valor:c.valor,referencia:c.id});
+      descricao:`Receb: ${fonte} — ${c.descricao}`,valor:c.valor,referencia:c.id});
     c.status='recebida'; c.recebidaEm=new Date().toISOString(); c.movimentoId=mov.id;
     this._s(this.K.CRECEBER,list); return c;
   },
@@ -128,6 +141,34 @@ const DB = {
     i>-1?list[i]=c:list.push(c);
     this._s(this.K.CLIENTES,list); return c;
   },
+
+  /* ── PEDIDOS ── */
+  getPedidos(){ return this._g(this.K.PEDIDOS); },
+  getPedido(id){ return this.getPedidos().find(p=>p.id===id)||null; },
+  savePedido(p){
+    const list=this.getPedidos();
+    if(!p.id){ p.id=this._id('ped'); p.criadoEm=new Date().toISOString(); p.numero=this._nextPedNum(); }
+    const i=list.findIndex(x=>x.id===p.id);
+    i>-1?list[i]=p:list.push(p);
+    this._s(this.K.PEDIDOS,list); return p;
+  },
+  _nextPedNum(){
+    const key='h_ped_seq'; const n=(+localStorage.getItem(key)||0)+1;
+    localStorage.setItem(key,n); return n;
+  },
+  deletePedido(id){ this._s(this.K.PEDIDOS,this.getPedidos().filter(p=>p.id!==id)); },
+
+  /* ── FORNECEDORES ── */
+  getFornecedores(){ return this._g(this.K.FORNECEDORES); },
+  getFornecedor(id){ return this.getFornecedores().find(f=>f.id===id)||null; },
+  saveFornecedor(f){
+    const list=this.getFornecedores();
+    if(!f.id){ f.id=this._id('forn'); f.criadoEm=new Date().toISOString(); }
+    const i=list.findIndex(x=>x.id===f.id);
+    i>-1?list[i]=f:list.push(f);
+    this._s(this.K.FORNECEDORES,list); return f;
+  },
+  deleteFornecedor(id){ this._s(this.K.FORNECEDORES,this.getFornecedores().filter(f=>f.id!==id)); },
 
   /* ── NOTAS FISCAIS ── */
   getNFs(){ return this._g(this.K.NFS); },
@@ -154,49 +195,78 @@ const DB = {
     return prefix+String(max+1).padStart(2,'0');
   },
 
+  /* Calcula o markup real de um produto: (preco/custo_ci - 1)*100
+     custo_ci = custo * (1 + impostoPercent/100) */
+  calcMarkup(p){
+    const ci=+(( (p.custo||0) * (1+(p.impostoPercent||0)/100) )).toFixed(4);
+    if(!ci||!p.preco) return 0;
+    return +( (p.preco/ci - 1)*100 ).toFixed(2);
+  },
+
+  /* Categoria do markup: alto ≥25%, medio 20-25%, baixo 12-20%, critico <12% */
+  markupClass(pct){
+    if(pct>=25) return 'alto';
+    if(pct>=20) return 'medio';
+    if(pct>=12) return 'baixo';
+    return 'critico';
+  },
+
+  /* Status de vencimento corrigido: hoje = "avencer", passado = "vencida" */
+  _statusVenc(vencStr){
+    if(!vencStr) return 'aberta';
+    const hoje=new Date(); hoje.setHours(0,0,0,0);
+    const venc=new Date(vencStr+'T00:00:00');
+    if(venc<hoje) return 'vencida';
+    if(venc.getTime()===hoje.getTime()) return 'avencer';
+    return 'aberta';
+  },
+
   atualizarStatusContas(){
-    const hoje=new Date().toDateString();
     ['CPAGAR','CRECEBER'].forEach(k=>{
       const list=this._g(this.K[k]);
       let changed=false;
       list.forEach(c=>{
-        if(c.status==='aberta'&&new Date(c.vencimento)<new Date(hoje)){ c.status='vencida'; changed=true; }
+        if(c.status==='paga'||c.status==='recebida') return;
+        const novo=this._statusVenc(c.vencimento);
+        if(c.status!==novo){ c.status=novo; changed=true; }
       });
       if(changed) this._s(this.K[k],list);
     });
   },
   countAlertasFinanceiros(){
     this.atualizarStatusContas();
-    const v=this.getContasPagar().filter(c=>c.status==='vencida').length;
-    const r=this.getContasReceber().filter(c=>c.status==='vencida').length;
+    const v=this.getContasPagar().filter(c=>c.status==='vencida'||c.status==='avencer').length;
+    const r=this.getContasReceber().filter(c=>c.status==='vencida'||c.status==='avencer').length;
     return v+r;
   },
 
   /* ── CLEAR ── */
   clear(){
     Object.values(this.K).forEach(k=>localStorage.removeItem(k));
+    ['h_ped_seq',this.K.NF_SEQ].forEach(k=>localStorage.removeItem(k));
   },
 
   /* ── SEED ── */
   seed(){
     this.clear();
-    // Produtos
     const cats=['Eletrônicos','Vestuário','Alimentos','Beleza','Casa'];
     const nomes=[['Fone Bluetooth','Cabo USB-C','Carregador 65W'],['Camiseta Básica','Calça Jeans','Tênis Casual'],
       ['Café Premium 500g','Azeite Extra Virgem','Chocolate 70%'],['Sérum Vitamina C','Protetor Solar','Shampoo'],['Luminária LED','Tapete Sala','Vaso Decorativo']];
     const prods=[];
     nomes.forEach((g,ci)=>g.forEach(nome=>{
       const custo=+(10+Math.random()*90).toFixed(2);
-      const margem=+(25+Math.random()*55).toFixed(1);
-      const preco=+(custo*(1+margem/100)).toFixed(2);
-      prods.push(this.saveProduto({nome,categoria:cats[ci],sku:nome.slice(0,3).toUpperCase()+'-'+Math.floor(100+Math.random()*900),
-        custo,margem,preco,estoque:Math.floor(5+Math.random()*95),minimo:Math.floor(5+Math.random()*15),descricao:''}));
+      const imposto=+(Math.random()*12).toFixed(1);
+      const custoCi=+(custo*(1+imposto/100)).toFixed(2);
+      const markup=+(25+Math.random()*55).toFixed(1);
+      const preco=+(custoCi*(1+markup/100)).toFixed(2);
+      prods.push(this.saveProduto({nome,categoria:cats[ci],
+        sku:nome.slice(0,3).toUpperCase()+'-'+Math.floor(100+Math.random()*900),
+        codigoBarras:'',impostoPercent:imposto,
+        custo,preco,estoque:Math.floor(5+Math.random()*95),minimo:Math.floor(5+Math.random()*15),descricao:''}));
     }));
 
-    // Abrir caixa
     const cx=this.abrirCaixa(2000);
 
-    // Vendas históricas (90 dias)
     const now=new Date();
     prods.forEach(prod=>{
       const n=Math.floor(3+Math.random()*20);
@@ -205,16 +275,16 @@ const DB = {
         const data=new Date(now); data.setDate(data.getDate()-dias);
         const qty=Math.floor(1+Math.random()*5);
         const preco=+(prod.preco*(0.9+Math.random()*.2)).toFixed(2);
+        const custoCI=+(prod.custo*(1+(prod.impostoPercent||0)/100)).toFixed(2);
         const venda=this.saveVenda({produtoId:prod.id,produtoNome:prod.nome,categoria:prod.categoria,
-          quantidade:qty,precoUnit:preco,custoUnit:prod.custo,
-          total:+(preco*qty).toFixed(2),lucro:+((preco-prod.custo)*qty).toFixed(2),
+          quantidade:qty,precoUnit:preco,custoUnit:custoCI,
+          total:+(preco*qty).toFixed(2),lucro:+((preco-custoCI)*qty).toFixed(2),
           data:data.toISOString(),canal:['loja','online','whatsapp','marketplace'][Math.floor(Math.random()*4)]});
         this.addMovimento({caixaId:cx.id,tipo:'entrada',categoria:'venda',
           descricao:`Venda: ${prod.nome} x${qty}`,valor:venda.total,referencia:venda.id,data:data.toISOString()});
       }
     });
 
-    // Contas a pagar
     const fornecedores=['Distribuidora ABC','Logística XYZ','Fornecedor Silva','Energia Elétrica','Aluguel'];
     fornecedores.forEach((f,i)=>{
       const venc=new Date(now); venc.setDate(venc.getDate()+(i%2===0?-5:10+i*5));
@@ -222,15 +292,13 @@ const DB = {
         vencimento:venc.toISOString().slice(0,10),status:i<2?'vencida':'aberta',pagaEm:null,movimentoId:null});
     });
 
-    // Contas a receber
-    const clientes2=['Cliente Souza','Empresa Beta','João Silva','Maria Costa','Loja Norte'];
-    clientes2.forEach((c,i)=>{
+    const fontes=['Cliente Souza','Empresa Beta','João Silva','Maria Costa','Loja Norte'];
+    fontes.forEach((c,i)=>{
       const venc=new Date(now); venc.setDate(venc.getDate()+(i%3===0?-3:7+i*4));
-      this.saveContaReceber({cliente:c,descricao:`Pedido ${1000+i}`,valor:+(300+Math.random()*1200).toFixed(2),
+      this.saveContaReceber({fonte:c,descricao:`Pedido ${1000+i}`,valor:+(300+Math.random()*1200).toFixed(2),
         vencimento:venc.toISOString().slice(0,10),status:i===0?'vencida':'aberta',recebidaEm:null,movimentoId:null});
     });
 
-    // Clientes para NF
     ['João Silva','Maria Costa','Empresa Beta Ltda'].forEach(nome=>{
       this.saveCliente({nome,cpfCnpj:nome.includes('Ltda')?'12.345.678/0001-90':'000.000.000-00',email:'',telefone:'',endereco:''});
     });

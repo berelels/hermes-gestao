@@ -267,6 +267,44 @@ label{font-size:11.5px;font-weight:600;color:var(--t2)}
   .print-table th{background:#f5f5f5;font-weight:700}
   .print-footer{margin-top:20px;font-size:11px;color:#666;text-align:center}
 }
+/* MARKUP CHIPS */
+.chip-markup-alto{background:rgba(34,211,160,.15);color:var(--green);border:1px solid rgba(34,211,160,.25)}
+.chip-markup-medio{background:rgba(245,158,11,.12);color:#e0a800;border:1px solid rgba(245,158,11,.25)}
+.chip-markup-baixo{background:rgba(255,120,50,.12);color:var(--orange);border:1px solid rgba(255,120,50,.3)}
+.chip-markup-critico{background:rgba(255,92,106,.12);color:var(--red);border:1px solid rgba(255,92,106,.25)}
+/* A VENCER CHIP */
+.chip-avencer{background:rgba(245,158,11,.15);color:#d4930a;border:1px solid rgba(245,158,11,.3)}
+/* YELLOW */
+--yellow:#f0c040;
+/* MARKUP ALERT BAR */
+.markup-alert-bar{display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:var(--rs);font-size:12.5px;font-weight:500}
+.markup-alert-bar.chip-markup-alto{background:rgba(34,211,160,.08)}
+.markup-alert-bar.chip-markup-medio{background:rgba(245,158,11,.08)}
+.markup-alert-bar.chip-markup-baixo{background:rgba(255,120,50,.08)}
+.markup-alert-bar.chip-markup-critico{background:rgba(255,92,106,.08)}
+.markup-alert-bar svg{width:14px;height:14px;flex-shrink:0}
+/* VENDA SEARCH HYBRID */
+.venda-search-wrap{position:relative}
+.venda-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--rs);z-index:400;max-height:260px;overflow-y:auto;box-shadow:var(--shadow)}
+.venda-dropdown.hidden{display:none}
+.vd-item{padding:9px 14px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border)}
+.vd-item:last-child{border-bottom:none}
+.vd-item:hover{background:var(--bg-card)}
+.vd-item.vd-none{color:var(--t3);cursor:default;font-size:12px}
+.vd-nome{font-size:13px;font-weight:600;color:var(--t1)}
+.vd-meta{font-size:11px;color:var(--t3);margin-top:2px}
+/* CART TABLE */
+.venda-cart-table{width:100%;border-collapse:collapse}
+.venda-cart-table thead th{padding:7px 10px;text-align:left;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);background:var(--bg-card2);border-bottom:1px solid var(--border)}
+.venda-cart-table tbody td{padding:8px 10px;font-size:13px;border-bottom:1px solid var(--border)}
+.venda-cart-table tbody tr:last-child td{border-bottom:none}
+/* INFO BANNERS */
+.info-banner{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:var(--rs);background:rgba(59,158,255,.08);border:1px solid rgba(59,158,255,.25);color:var(--blue);font-size:12.5px}
+.info-banner svg{width:14px;height:14px;flex-shrink:0}
+.info-banner-warn{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:var(--rs);background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);color:#d4930a;font-size:12.5px}
+.info-banner-warn svg{width:14px;height:14px;flex-shrink:0}
+/* YELLOW for variables */
+:root{--yellow:#f0c040}
 /* SCROLLBAR */
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
