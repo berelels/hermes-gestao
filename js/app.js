@@ -93,7 +93,10 @@ function updateGlobalStatus(){
   document.getElementById('sb-produtos').textContent=prods.length+' produtos';
   const caixa=DB.getCaixaAberto();
   const saldo=DB.getSaldoCaixa();
-  document.getElementById('sb-caixa').textContent=caixa?'Caixa aberto — '+fmt(saldo):'Caixa fechado';
+  const negativo=caixa&&saldo<0;
+  document.getElementById('sb-caixa').textContent=caixa?(negativo?'⚠️ CAIXA NEGATIVO — ':'Caixa aberto — ')+fmt(saldo):'Caixa fechado';
+  if(negativo) document.getElementById('sb-caixa').style.color='var(--red)';
+  else document.getElementById('sb-caixa').style.color='';
   document.getElementById('sb-alertas').textContent=alertasProd+' alertas';
 
   // badge financeiro
@@ -103,7 +106,10 @@ function updateGlobalStatus(){
   // caixa status pill in header
   const pillEl=document.getElementById('caixa-status-pill');
   if(pillEl){
-    if(caixa){
+    if(caixa&&negativo){
+      pillEl.innerHTML=`<button class="cs-pill negativo" onclick="Hermes.navigate('financeiro')">
+        <span class="cs-dot"></span>⚠️ Caixa Negativo — ${fmt(saldo)}</button>`;
+    } else if(caixa){
       pillEl.innerHTML=`<button class="cs-pill aberto" onclick="Hermes.navigate('financeiro')">
         <span class="cs-dot"></span>Caixa Aberto — ${fmt(saldo)}</button>`;
     } else {

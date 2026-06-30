@@ -58,6 +58,8 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 #caixa-status-pill .cs-pill{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .2s}
 #caixa-status-pill .cs-pill.aberto{background:rgba(34,211,160,.12);color:var(--green);border:1px solid rgba(34,211,160,.25)}
 #caixa-status-pill .cs-pill.fechado{background:rgba(255,92,106,.12);color:var(--red);border:1px solid rgba(255,92,106,.25)}
+#caixa-status-pill .cs-pill.negativo{background:rgba(255,92,106,.2);color:var(--red);border:1px solid rgba(255,92,106,.5);animation:pulsaRed 1.5s ease-in-out infinite}
+@keyframes pulsaRed{0%,100%{box-shadow:0 0 0 0 rgba(255,92,106,.4)}50%{box-shadow:0 0 0 5px rgba(255,92,106,0)}}
 #caixa-status-pill .cs-dot{width:7px;height:7px;border-radius:50%;background:currentColor}
 /* CONTENT */
 #page-content{flex:1;overflow-y:auto;overflow-x:hidden;padding:26px 30px;scroll-behavior:smooth}
