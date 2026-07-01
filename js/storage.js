@@ -211,6 +211,15 @@ const DB = {
     return 'critico';
   },
 
+  markupColor(pct){
+    const cls=this.markupClass(pct);
+    const map={alto:{cls:'chip-paga',bar:'var(--green)',lbl:'Alto'},
+               medio:{cls:'chip-avencer',bar:'var(--yellow)',lbl:'Médio'},
+               baixo:{cls:'chip-aberta',bar:'var(--accent)',lbl:'Baixo'},
+               critico:{cls:'chip-vencida',bar:'var(--red)',lbl:'Crítico'}};
+    return map[cls]||map.critico;
+  },
+
   /* Status de vencimento corrigido: hoje = "avencer", passado = "vencida" */
   _statusVenc(vencStr){
     if(!vencStr) return 'aberta';
