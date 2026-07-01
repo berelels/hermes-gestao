@@ -106,7 +106,7 @@ openModal(id=null){
   const initMk=DB.calcMarkup(v)||'';
   const initCi=+(( (v.custo||0)*(1+totalImp()/100) )).toFixed(2);
 
-  openModal(`<div class="modal-backdrop">
+  window.openModal(`<div class="modal-backdrop">
     <div class="modal-box modal-lg">
       <div class="modal-header"><h2>${p?'Editar Produto':'Novo Produto'}</h2><button class="modal-close" data-close-modal><i data-lucide="x"></i></button></div>
       <div class="modal-body">
@@ -145,16 +145,16 @@ openModal(id=null){
           <div id="mp-imp-list"></div>
           <div id="mp-imp-total" style="font-size:12px;color:var(--t3);margin-top:4px"></div>
         </div>
-        <!-- PREVIEW -->
+        <!-- PREVIEW FINANCEIRO -->
         <div class="pricing-preview">
           <div class="pp-item"><span>Custo s/imp</span><strong id="pp-c">${fmt(v.custo)}</strong></div>
           <div class="pp-arrow"><i data-lucide="arrow-right"></i></div>
-          <div class="pp-item"><span>Impostos</span><strong id="pp-imp">${fmtPct(totalImp())}</strong></div>
+          <div class="pp-item"><span>Custo c/imp</span><strong id="pp-ci">${fmt(initCi)}</strong></div>
           <div class="pp-arrow"><i data-lucide="arrow-right"></i></div>
-          <div class="pp-item"><span>Markup</span><strong id="pp-m">${fmtPct(initMk)}</strong></div>
+          <div class="pp-item hi"><span>Preço Venda</span><strong id="pp-p">${fmt(v.preco)}</strong></div>
           <div class="pp-arrow"><i data-lucide="arrow-right"></i></div>
-          <div class="pp-item hi"><span>Preço</span><strong id="pp-p">${fmt(v.preco)}</strong></div>
-          <div class="pp-item gr"><span>Lucro Unit.</span><strong id="pp-l">${fmt((v.preco||0)-initCi)}</strong></div>
+          <div class="pp-item gr"><span>Lucro Líq. (R$)</span><strong id="pp-l">${fmt((v.preco||0)-initCi)}</strong></div>
+          <div class="pp-item gr"><span>Margem s/preço</span><strong id="pp-mg">—</strong></div>
         </div>
         <div id="mp-markup-alert" style="margin-top:8px"></div>
       </div>
@@ -182,30 +182,30 @@ openModal(id=null){
     document.getElementById('mp-imp-total').textContent=v.impostos.length?`Total impostos: ${fmtPct(tot)}`:'';
   };
   document.getElementById('mp-add-imp').addEventListener('click',()=>{v.impostos.push({nome:'',valor:0});renderImpostos();upd();});
-  renderImpostos();
-
-  // ── Recalcular preview ──
   const upd=()=>{
     const c=+document.getElementById('mp-custo').value||0;
     const tot=totalImp();
     const mk=+document.getElementById('mp-markup').value||0;
     const ci=+(c*(1+tot/100)).toFixed(2);
     const pr=+(ci*(1+mk/100)).toFixed(2);
+    const lucroLiq=+(pr-ci).toFixed(2);
+    const margemPct=pr>0?+((lucroLiq/pr)*100).toFixed(1):0;
     document.getElementById('mp-custo-ci').value=ci||'';
     document.getElementById('mp-preco').value=pr||'';
     document.getElementById('pp-c').textContent=fmt(c);
-    document.getElementById('pp-imp').textContent=fmtPct(tot);
-    document.getElementById('pp-m').textContent=fmtPct(mk);
+    document.getElementById('pp-ci').textContent=fmt(ci);
     document.getElementById('pp-p').textContent=fmt(pr);
-    document.getElementById('pp-l').textContent=fmt(pr-ci);
+    document.getElementById('pp-l').textContent=fmt(lucroLiq);
+    document.getElementById('pp-mg').textContent=pr>0?fmtPct(margemPct):'—';
     const al=document.getElementById('mp-markup-alert');
     const mc=DB.markupColor(mk);
     const lbl={alto:'Alta ✅',medio:'Média ⚠️',baixo:'Baixa 🔴',critico:'Crítico ⛔'};
-    al.innerHTML=mk>0?`<div class="markup-alert-bar ${mc.cls}">Markup: <strong>${lbl[DB.markupClass(mk)]}</strong></div>`:'';
+    al.innerHTML=mk>0?`<div class="markup-alert-bar ${mc.cls}">Markup: <strong>${lbl[DB.markupClass(mk)]}</strong> · Margem s/preço: <strong>${fmtPct(margemPct)}</strong> · Lucro unit.: <strong>${fmt(lucroLiq)}</strong></div>`:'';
     if(mk>0)lucide.createIcons({nodes:[al]});
   };
   document.getElementById('mp-custo').addEventListener('input',upd);
   document.getElementById('mp-markup').addEventListener('input',upd);
+  renderImpostos();
   upd();
 
   // ── Categoria: fix display ──
